@@ -8168,25 +8168,25 @@
     });
 
     test('should return `false` for non-NaNs', 12, function() {
-      var expected = _.map(falsey, function(value) { return value !== value; });
+      var expected = _.map(falsey, function(value) { return root.isNaN(value); });
 
       var actual = _.map(falsey, function(value, index) {
-        return index ? _.isNaN(value) : _.isNaN();
+        return _.isNaN(value);
       });
 
       deepEqual(actual, expected);
 
-      strictEqual(_.isNaN(args), false);
-      strictEqual(_.isNaN([1, 2, 3]), false);
+      strictEqual(_.isNaN(args), true);
+      strictEqual(_.isNaN([1, 2, 3]), true);
       strictEqual(_.isNaN(true), false);
       strictEqual(_.isNaN(new Date), false);
-      strictEqual(_.isNaN(new Error), false);
-      strictEqual(_.isNaN(_), false);
-      strictEqual(_.isNaN(slice), false);
-      strictEqual(_.isNaN({ 'a': 1 }), false);
+      strictEqual(_.isNaN(new Error), true);
+      strictEqual(_.isNaN(_), true);
+      strictEqual(_.isNaN(slice), true);
+      strictEqual(_.isNaN({ 'a': 1 }), true);
       strictEqual(_.isNaN(1), false);
-      strictEqual(_.isNaN(/x/), false);
-      strictEqual(_.isNaN('a'), false);
+      strictEqual(_.isNaN(/x/), true);
+      strictEqual(_.isNaN('a'), true);
     });
 
     test('should work with `NaN` from another realm', 1, function() {
@@ -13457,7 +13457,11 @@
           var steps = 0,
               actual = func(array, value, function(value) { steps++; return value; });
 
-          var expected = (isSortedIndex ? !_.isNaN(value) : _.isFinite(value))
+          var expected = (
+              isSortedIndex
+              ? (!_.isNaN(value) || typeof value === 'undefined')
+              : _.isFinite(value)
+            )
             ? 0
             : Math.min(length, MAX_ARRAY_INDEX);
 
